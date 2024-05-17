@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         test-name: [
-          test-kitsune-p2p
-          test-holochain
+          test-kitsune-p2p,
+          test-holochain,
         ]
         os: [
           ubuntu-latest,
