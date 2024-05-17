@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         test-name: [
-          test-kitsune-p2p,
-          test-holochain,
+          'kitsune_p2p/kitsune_p2p',
+          'holochain',
         ]
         os: [
           ubuntu-latest,
@@ -27,6 +27,11 @@ jobs:
           '1.75.0',
         ]
     steps:
+      - name: free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+
       - name: checkout
         uses: actions/checkout@v4
 
@@ -40,12 +45,20 @@ jobs:
           rustup toolchain install ${{ matrix.toolchain }} --profile minimal --no-self-update
           rustup default ${{ matrix.toolchain }}
 
+      - name: rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: cargo prune
+        run: |
+          cargo install cargo-prune
+          cargo prune
+
       - name: install vcpkg packages
         if: matrix.os == 'windows-latest'
         uses: johnwason/vcpkg-action@v6
         id: vcpkg
         with:
-          pkgs: libsodium
+          pkgs: libsodium openssl
           triplet: x64-windows-release
           token: ${{ github.token }}
           github-binarycache: true
@@ -53,6 +66,7 @@ jobs:
       - name: test windows
         if: matrix.os == 'windows-latest'
         run: |-
+          $env:OPENSSL_DIR="$(pwd)\vcpkg\packages\openssl_x64-windows-release"
           $env:SODIUM_LIB_DIR="$(pwd)\vcpkg\packages\libsodium_x64-windows-release\lib"
           make ${{ matrix.test-name }}
 

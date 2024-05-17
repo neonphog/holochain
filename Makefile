@@ -1,28 +1,19 @@
 # holochain Makefile
 
-.PHONY: all test-all test-kitsune-p2p test-holochain
+CRATES = kitsune_p2p/kitsune_p2p holochain
+
+.PHONY: all test-all $(CRATES)
 
 all: test-all
 
-test-all: test-kitsune-p2p test-holochain
+test-all: kitsune_p2p/kitsune_p2p holochain
 
-test-kitsune-p2p:
-	cd crates/kitsune_p2p/kitsune_p2p && \
+$(CRATES):
+	cd crates/$@ && \
 		cargo build -j4 \
-		--all-targets \
+		--all-features --all-targets \
 		--profile fast-test
-	cd crates/kitsune_p2p/kitsune_p2p && \
-		RUST_BACKTRACE=1 cargo test -j4 \
-		--all-features \
-		--profile fast-test \
-		-- --test-threads 1 --nocapture
-
-test-holochain:
-	cd crates/holochain && \
-		cargo build -j4 \
-		--all-targets \
-		--profile fast-test
-	cd crates/holochain && \
+	cd crates/$@ && \
 		RUST_BACKTRACE=1 cargo test -j4 \
 		--all-features \
 		--profile fast-test \
