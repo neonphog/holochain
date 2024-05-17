@@ -28,6 +28,7 @@ jobs:
         ]
     steps:
       - name: free disk space
+        if: matrix.os == 'ubuntu-latest'
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: false
