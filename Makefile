@@ -6,7 +6,7 @@ CRATES = kitsune_p2p/kitsune_p2p holochain
 
 all: test-all
 
-test-all: kitsune_p2p/kitsune_p2p holochain
+test-all: $(CRATES)
 
 $(CRATES):
 	cd crates/$@ && \
